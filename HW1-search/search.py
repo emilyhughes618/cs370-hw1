@@ -126,7 +126,6 @@ def depthFirstSearch(problem):
     while stack.isEmpty() == False:
         # if counter == 5:
         #    break
-        counter += 1
         print("New Element ")
         currentNode = stack.pop()
         print(currentNode[0])
