@@ -262,7 +262,8 @@ def uniformCostSearch(problem):
     
     
     for successor in problem.getSuccessors(problem.getStartState()):
-                queue.push([successor, [successor[1]]], successor[2])
+        print(successor[2])
+        queue.push([successor, [successor[1]], successor[2]], successor[2])
     
     
 
@@ -270,6 +271,7 @@ def uniformCostSearch(problem):
         # if counter == 5:
         #    break
         currentNode = queue.pop()
+
         if(currentNode[0][0] in visited):
             continue
 
@@ -286,7 +288,7 @@ def uniformCostSearch(problem):
                 if(successor[0] not in visited):
                     newList = currentNode[1].copy()
                     newList.append(successor[1])
-                    queue.push([successor, newList], successor[2])
+                    queue.push([successor, newList, successor[2]+currentNode[2]], successor[2]+currentNode[2])
 
                 
 
