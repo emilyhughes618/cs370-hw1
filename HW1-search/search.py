@@ -72,6 +72,12 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+
+
+        
+
+
+
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
@@ -87,21 +93,72 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
+    
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+
     from game import Directions
     from util import Stack
+
+
+    South = Directions.SOUTH
+    West = Directions.WEST
+    East = Directions.EAST
+    North = Directions.NORTH
+    Stop = Directions.STOP
+
+    retList = []
+    visited = []
+    
+    
     stack = Stack()
+    
     if problem.isGoalState(problem.getStartState()):
-        return [Directions.STOP]
-    stack.push(problem.getStartState())
-    while stack.isEmpty is False:
+        return [Stop]
+    
+    
+    for successor in problem.getSuccessors(problem.getStartState()):
+                stack.push([successor, [successor[1]]])
+    
+    
+
+    while stack.isEmpty() == False:
+        # if counter == 5:
+        #    break
+        counter += 1
+        print("New Element ")
         currentNode = stack.pop()
-        for successor in problem.getSuccessors(currentNode):
+        print(currentNode[0])
+        print(currentNode[1])
+
+        visited.append(currentNode[0][0])
+        
+
+        if problem.isGoalState(currentNode[0][0]):
+            retList = currentNode[1].copy()
+            print(*retList)
+            return retList
+
+        else:
+            for successor in problem.getSuccessors(currentNode[0][0]):
+                if(successor[0] not in visited):
+                    newList = currentNode[1].copy()
+                    newList.append(successor[1])
+                    stack.push([successor, newList])
+
+                
+
+    return retList
+
+    
+
+
+            
             
     
     # util.raiseNotDefined()
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
