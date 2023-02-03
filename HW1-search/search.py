@@ -236,7 +236,7 @@ def uniformCostSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
 
     from game import Directions
-    from util import Stack
+    from util import PriorityQueue
 
 
     South = Directions.SOUTH
@@ -249,24 +249,21 @@ def uniformCostSearch(problem):
     visited = []
     
     
-    queue = []
+    queue = PriorityQueue()
     
     if problem.isGoalState(problem.getStartState()):
         return [Stop]
     
     
     for successor in problem.getSuccessors(problem.getStartState()):
-                queue.append([successor, [successor[1]]])
+                queue.push([successor, [successor[1]]], successor[2])
     
     
 
-    while len(queue) > 0:
+    while queue.isEmpty() == False:
         # if counter == 5:
         #    break
-        print("New Element ")
         currentNode = queue.pop()
-        print(currentNode[0])
-        print(currentNode[1])
 
         visited.append(currentNode[0][0])
         
@@ -281,12 +278,13 @@ def uniformCostSearch(problem):
                 if(successor[0] not in visited):
                     newList = currentNode[1].copy()
                     newList.append(successor[1])
-                    queue.append([successor, newList])
+                    queue.push([successor, newList], successor[2])
 
                 
 
     return retList
-    #util.raiseNotDefined()
+
+
 
 def nullHeuristic(state, problem=None):
     """
