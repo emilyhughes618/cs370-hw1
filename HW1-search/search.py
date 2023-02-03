@@ -94,9 +94,6 @@ def depthFirstSearch(problem):
     """
     "*** YOUR CODE HERE ***"
     
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
 
     from game import Directions
     from util import Stack
@@ -126,10 +123,11 @@ def depthFirstSearch(problem):
     while stack.isEmpty() == False:
         # if counter == 5:
         #    break
-        print("New Element ")
         currentNode = stack.pop()
-        print(currentNode[0])
-        print(currentNode[1])
+      
+        if(currentNode[0][0] in visited):
+                continue
+      
 
         visited.append(currentNode[0][0])
         
@@ -163,9 +161,7 @@ def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
         
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+
 
     from game import Directions
     from util import Queue
@@ -182,9 +178,15 @@ def breadthFirstSearch(problem):
     
     
     queue = Queue()
+
+    initial = problem.getStartState()
     
-    if problem.isGoalState(problem.getStartState()):
+    if problem.isGoalState(initial):
         return [Stop]
+    
+    visited.append(initial)
+
+
     
     
     for successor in problem.getSuccessors(problem.getStartState()):
@@ -195,12 +197,13 @@ def breadthFirstSearch(problem):
     while queue.isEmpty() == False:
         # if counter == 5:
         #    break
-        print("New Element ")
         currentNode = queue.pop()
-        print(currentNode[0])
-        print(currentNode[1])
+
+        if(currentNode[0][0] in visited):
+            continue
 
         visited.append(currentNode[0][0])
+        
         
 
         if problem.isGoalState(currentNode[0][0]):
@@ -231,9 +234,7 @@ def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
             
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+ 
 
     from game import Directions
     from util import PriorityQueue
@@ -251,8 +252,13 @@ def uniformCostSearch(problem):
     
     queue = PriorityQueue()
     
-    if problem.isGoalState(problem.getStartState()):
+    initial = problem.getStartState()
+    if problem.isGoalState(initial):
         return [Stop]
+
+    visited.append(initial)
+
+    
     
     
     for successor in problem.getSuccessors(problem.getStartState()):
@@ -264,6 +270,8 @@ def uniformCostSearch(problem):
         # if counter == 5:
         #    break
         currentNode = queue.pop()
+        if(currentNode[0][0] in visited):
+            continue
 
         visited.append(currentNode[0][0])
         
@@ -296,7 +304,61 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+              
+ 
+
+    from game import Directions
+    from util import PriorityQueue
+    from util import manhattanDistance
+
+
+    South = Directions.SOUTH
+    West = Directions.WEST
+    East = Directions.EAST
+    North = Directions.NORTH
+    Stop = Directions.STOP
+
+    retList = []
+    visited = []
+    
+    
+    queue = PriorityQueue()
+    initial = problem.getStartState()
+    
+    if problem.isGoalState(initial):
+        return [Stop]
+    
+    
+    for successor in problem.getSuccessors(problem.getStartState()):
+                queue.push([successor, [successor[1]]],manhattanDistance(initial, successor[0]))
+    
+    
+
+    while queue.isEmpty() == False:
+        # if counter == 5:
+        #    break
+        currentNode = queue.pop()
+
+        visited.append(currentNode[0][0])
+        
+
+        if problem.isGoalState(currentNode[0][0]):
+            retList = currentNode[1].copy()
+            print(*retList)
+            return retList
+
+        else:
+            for successor in problem.getSuccessors(currentNode[0][0]):
+                if(successor[0] not in visited):
+                    newList = currentNode[1].copy()
+                    newList.append(successor[1])
+                    queue.push([successor, newList], manhattanDistance(initial, successor[0]))
+
+                
+
+    return retList
+
 
 
 # Abbreviations
