@@ -312,7 +312,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     from game import Directions
     from util import PriorityQueue
-    from util import manhattanDistance
 
 
     South = Directions.SOUTH
@@ -330,10 +329,12 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     
     if problem.isGoalState(initial):
         return [Stop]
+
+    visited.append(initial)
     
     
     for successor in problem.getSuccessors(problem.getStartState()):
-                queue.push([successor, [successor[1]]],manhattanDistance(initial, successor[0]))
+                queue.push([successor, [successor[1]], successor[2] + heuristic(successor[0], problem)], successor[2] + heuristic(successor[0], problem))
     
     
 
@@ -341,6 +342,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         # if counter == 5:
         #    break
         currentNode = queue.pop()
+
+        if(currentNode[0][0] in visited):
+            continue
 
         visited.append(currentNode[0][0])
         
@@ -355,7 +359,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 if(successor[0] not in visited):
                     newList = currentNode[1].copy()
                     newList.append(successor[1])
-                    queue.push([successor, newList], manhattanDistance(initial, successor[0]))
+                    queue.push([successor, newList, successor[2]+currentNode[2] + heuristic(successor[0], problem)], successor[2]+currentNode[2] + heuristic(successor[0], problem))
 
                 
 
