@@ -191,6 +191,7 @@ def breadthFirstSearch(problem):
     
     for successor in problem.getSuccessors(problem.getStartState()):
                 queue.push([successor, [successor[1]]])
+
     
     
 
@@ -332,8 +333,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         return [Stop]
     
     
+
     for successor in problem.getSuccessors(problem.getStartState()):
-                queue.push([successor, [successor[1]]],manhattanDistance(initial, successor[0]))
+                queue.push([successor, [successor[1]]],manhattanDistance(initial, successor[0].goal()))
     
     
 
@@ -355,7 +357,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 if(successor[0] not in visited):
                     newList = currentNode[1].copy()
                     newList.append(successor[1])
-                    queue.push([successor, newList], manhattanDistance(initial, successor[0]))
+                    queue.push([successor, newList], manhattanDistance(initial, successor[0].goal))
 
                 
 
