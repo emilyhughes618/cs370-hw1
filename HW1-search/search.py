@@ -263,8 +263,9 @@ def uniformCostSearch(problem):
     
     
     for successor in problem.getSuccessors(problem.getStartState()):
-        print(successor[2])
+        print(successor)
         queue.push([successor, [successor[1]], successor[2]], successor[2])
+    print(queue.heap)
     
     
 
@@ -272,6 +273,7 @@ def uniformCostSearch(problem):
         # if counter == 5:
         #    break
         currentNode = queue.pop()
+        print("CurrentNode:", currentNode[0], currentNode[1], currentNode[2])
 
         if(currentNode[0][0] in visited):
             continue
@@ -308,12 +310,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
 
-              
- 
 
     from game import Directions
     from util import PriorityQueue
-    from util import manhattanDistance
 
 
     South = Directions.SOUTH
@@ -324,18 +323,24 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     retList = []
     visited = []
+
+    def costFunc(heuristic, node, problem):
+        return heuristic(node, problem) + node[2]
     
     
     queue = PriorityQueue()
-    initial = problem.getStartState()
     
+    initial = problem.getStartState()
     if problem.isGoalState(initial):
         return [Stop]
-    
-    
+
+    visited.append(initial)
 
     for successor in problem.getSuccessors(problem.getStartState()):
-                queue.push([successor, [successor[1]]],manhattanDistance(initial, successor[0].goal()))
+        print(successor)
+        queue.push([successor, [successor[1]], successor[2]], successor[2] + heuristic(successor[0], problem))
+    print(queue.heap)
+    
     
     
 
@@ -344,12 +349,15 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         #    break
         currentNode = queue.pop()
 
+        if(currentNode[0][0] in visited):
+            continue
+
         visited.append(currentNode[0][0])
         
 
         if problem.isGoalState(currentNode[0][0]):
             retList = currentNode[1].copy()
-            print(*retList)
+            # print(*retList)
             return retList
 
         else:
@@ -357,12 +365,15 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 if(successor[0] not in visited):
                     newList = currentNode[1].copy()
                     newList.append(successor[1])
+<<<<<<< HEAD
                     queue.push([successor, newList], manhattanDistance(initial, successor[0].goal))
+=======
+                    queue.push([successor, newList, successor[2]+currentNode[2]],successor[2]+currentNode[2] + heuristic(successor[0], problem) )
+>>>>>>> bd4d3b4d5598181d4b53872ce6791919de6c496d
 
                 
 
     return retList
-
 
 
 # Abbreviations
