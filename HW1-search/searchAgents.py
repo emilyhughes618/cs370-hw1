@@ -34,6 +34,7 @@ description for details.
 Good luck and happy searching!
 """
 
+from operator import truediv
 from game import Directions
 from game import Agent
 from game import Actions
@@ -288,7 +289,13 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        self.cornerCount = 0
+              
+        
+        self.reached = []
+        self.startState = (self.startingPosition, self.reached)
+        #self.cornerCount = 0
+        self.visualize = True
+
 
 
     def getStartState(self):
@@ -297,17 +304,23 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return self.startingPosition
+        return self.startState
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        if state in self.corners:
-            self.cornerCount += 1
-        if self.cornerCount == 4:
-            return True
+        currentNode = state[0]
+        reachedGoals = state[1]
+
+        if currentNode in self.corners and currentNode not in reachedGoals:
+            reachedGoals.append(currentNode)
+        
+        
+        return len(reachedGoals) == len(self.corners)
+        
+        
 
     def getSuccessors(self, state):
         """
@@ -331,13 +344,18 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
-            x,y = state
+            currentNode = state[0]
+            reachedGoals = state[1]
+
+            x,y = currentNode
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
                 nextState = (nextx, nexty)
+                nextStateReachedGoals = reachedGoals.copy()
+                self.isGoalState((nextState, nextStateReachedGoals))
                 stepCost = 1
-                successors.append( ( nextState, action, stepCost) )
+                successors.append(((nextState,nextStateReachedGoals), action, stepCost))
 
 
         self._expanded += 1 # DO NOT CHANGE
@@ -356,6 +374,10 @@ class CornersProblem(search.SearchProblem):
             if self.walls[x][y]: return 999999
         return len(actions)
 
+def euclideanDistance(pos1, pos2):
+    import math 
+
+    return math.sqrt((pos1[0] - pos2[0])*(pos1[0] - pos2[0]) + (pos1[1] - pos2[1])*(pos1[1] - pos2[1]))
 
 def cornersHeuristic(state, problem):
     """
@@ -370,11 +392,62 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
+
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
+    currentNode = state[0]
+    reachedGoals = state[1]
+    
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+
+    unvisited = []
+    for goal in corners:
+        if goal not in reachedGoals:
+            unvisited.append(goal)
+    
+
+    
+    if len(unvisited) == 1:
+        return euclideanDistance(currentNode, unvisited[0])
+
+    if len(unvisited) == 2:
+        case1 = euclideanDistance(currentNode, unvisited[0]) + euclideanDistance(unvisited[1], unvisited[0])
+        case2 = euclideanDistance(currentNode, unvisited[1]) + euclideanDistance(unvisited[1], unvisited[0])
+
+        return min(case1, case2)
+    
+    if len(unvisited) == 3:
+        #case1 = euclideanDistance(currentNode, unvisited[0]) + euclideanDistance(unvisited[0], unvisited[1]) + euclideanDistance(unvisited[1], unvisited[2])
+        #case2 = euclideanDistance(currentNode, unvisited[0]) + euclideanDistance(unvisited[0], unvisited[2]) + euclideanDistance(unvisited[2], unvisited[1])
+        #case3 = euclideanDistance(currentNode, unvisited[1]) + euclideanDistance(unvisited[1], unvisited[2]) + euclideanDistance(unvisited[2], unvisited[0])
+        #case4 = euclideanDistance(currentNode, unvisited[1]) + euclideanDistance(unvisited[1], unvisited[0]) + euclideanDistance(unvisited[0], unvisited[2])
+        #case5 = euclideanDistance(currentNode, unvisited[2]) + euclideanDistance(unvisited[2], unvisited[1]) + euclideanDistance(unvisited[1], unvisited[0])
+        #case6 = euclideanDistance(currentNode, unvisited[2]) + euclideanDistance(unvisited[2], unvisited[0]) + euclideanDistance(unvisited[0], unvisited[1])
+
+        #return min(case1,case2,case3,case4,case5,case6)
+        min(euclideanDistance(currentNode, unvisited[0]), euclideanDistance(currentNode, unvisited[1]), euclideanDistance(currentNode, unvisited[2]))
+
+    if len(unvisited) == 4:
+        #minPath = max(euclideanDistance(unvisited[0], unvisited[1]), euclideanDistance(unvisited[1], unvisited[2]), euclideanDistance(unvisited[2], unvisited[3]), euclideanDistance(unvisited[3], unvisited[0])) + 2*min(euclideanDistance(unvisited[0], unvisited[1]), euclideanDistance(unvisited[1], unvisited[2]), euclideanDistance(unvisited[2], unvisited[3]), euclideanDistance(unvisited[3], unvisited[0]))
+
+        #return minPath + min(euclideanDistance(currentNode, unvisited[0]), euclideanDistance(currentNode, unvisited[1]), euclideanDistance(currentNode, unvisited[2]), euclideanDistance(currentNode, unvisited[3]))
+        return min(euclideanDistance(currentNode, unvisited[0]), euclideanDistance(currentNode, unvisited[1]), euclideanDistance(currentNode, unvisited[2]), euclideanDistance(currentNode, unvisited[3]))
+    
+    ''' 
+
+    costList = []
+
+    for goal in unvisited:
+        costList.append(euclideanDistance(currentNode, goal))
+
+    return min(costList)
+    '''
+
+    return 0
+
+
+    
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -468,7 +541,36 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+
+    import math 
+
+
+    x1 = 0
+    y1 = 0
+    x2 = 0
+    y2 = 0
+    counter = 0
+    cost = 0
+    if len(foodGrid.asList()) == 0:
+        return 0
+    for food in foodGrid.asList():
+        #if(counter/2 == 0):
+        x1 += food[0]
+        y1 += food[1]
+        cost += math.sqrt((food[0] - position[0])*(food[0] - position[0]) + (food[1] - position[1])*(food[1] - position[1])) 
+        #else:
+        #    x2 += food[0]
+        #    y2 += food[1]
+        counter += 1
+    
+    # find the median point
+    x1 = (x1/counter)
+    y1 = (y1/counter) 
+    x2 = (x2/counter)
+    y2 = (y2/counter) 
+    
+    #return cost / math.sqrt((x1 - position[0])*(x1 - position[0]) + (y1 - position[1])*(y1 - position[1])) 
+    return math.sqrt((x1 - position[0])*(x1 - position[0]) + (y1 - position[1])*(y1 - position[1])) 
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
