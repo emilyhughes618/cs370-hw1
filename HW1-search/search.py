@@ -262,8 +262,9 @@ def uniformCostSearch(problem):
     
     
     for successor in problem.getSuccessors(problem.getStartState()):
-        print(successor[2])
+        print(successor)
         queue.push([successor, [successor[1]], successor[2]], successor[2])
+    print(queue.heap)
     
     
 
@@ -271,6 +272,7 @@ def uniformCostSearch(problem):
         # if counter == 5:
         #    break
         currentNode = queue.pop()
+        print("CurrentNode:", currentNode[0], currentNode[1], currentNode[2])
 
         if(currentNode[0][0] in visited):
             continue
@@ -307,8 +309,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
 
-              
- 
 
     from game import Directions
     from util import PriorityQueue
@@ -322,19 +322,26 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     retList = []
     visited = []
+
+    def costFunc(heuristic, node, problem):
+        return heuristic(node, problem) + node[2]
     
     
     queue = PriorityQueue()
-    initial = problem.getStartState()
     
+    initial = problem.getStartState()
     if problem.isGoalState(initial):
         return [Stop]
 
     visited.append(initial)
+
+    
     
     
     for successor in problem.getSuccessors(problem.getStartState()):
-                queue.push([successor, [successor[1]], successor[2] + heuristic(successor[0], problem)], successor[2] + heuristic(successor[0], problem))
+        print(successor)
+        queue.push([successor, [successor[1]], successor[2]], successor[2] + heuristic(successor[0], problem))
+    print(queue.heap)
     
     
 
@@ -351,7 +358,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
         if problem.isGoalState(currentNode[0][0]):
             retList = currentNode[1].copy()
-            print(*retList)
+            # print(*retList)
             return retList
 
         else:
@@ -359,12 +366,11 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 if(successor[0] not in visited):
                     newList = currentNode[1].copy()
                     newList.append(successor[1])
-                    queue.push([successor, newList, successor[2]+currentNode[2] + heuristic(successor[0], problem)], successor[2]+currentNode[2] + heuristic(successor[0], problem))
+                    queue.push([successor, newList, successor[2]+currentNode[2]],successor[2]+currentNode[2] + heuristic(successor[0], problem) )
 
                 
 
     return retList
-
 
 
 # Abbreviations
