@@ -332,10 +332,10 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     
     
     for successor in problem.getSuccessors(problem.getStartState()):
-        print(successor)
+        # print(successor)
         queue.push([successor, [successor[1]], successor[2]], successor[2] + heuristic(successor[0], problem))
     
-    print(queue.heap)
+   # print(queue.heap)
     
     
 

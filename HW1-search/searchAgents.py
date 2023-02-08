@@ -544,15 +544,7 @@ def foodHeuristic(state, problem):
 
     import math 
 
-
-    x1 = 0
-    y1 = 0
-    x2 = 0
-    y2 = 0
-    counter = 0
-    cost = 0
-    # print(foodGrid.asList())
-    #max mazedistance from position to the furthest point?
+    #max mazedistance from position to the furthest point? 
     maxList = []
     foodList = foodGrid.asList()
     for food in foodList:
@@ -561,22 +553,6 @@ def foodHeuristic(state, problem):
     if len(maxList) > 0:
         return max(maxList)
     return 0
-
-    return len(foodGrid.asList())
-    foodList = foodGrid.asList()
-    distanceSum = 0
-    minDict = {}
-    #finds closest food
-    for food in foodList:
-        minDict[food] = mazeDistance(position, food, problem.startingGameState)
-    if len(minDict) > 0:
-        distanceSum += (min(minDict.values()))
-        newPosition = min(minDict, key=minDict.get)
-        minDict = {}
-    else: 
-        return 0
-    return distanceSum
-
 
 '''
     else:
