@@ -551,26 +551,60 @@ def foodHeuristic(state, problem):
     y2 = 0
     counter = 0
     cost = 0
-    if len(foodGrid.asList()) == 0:
+    # print(foodGrid.asList())
+    #max mazedistance from position to the furthest point?
+    maxList = []
+    foodList = foodGrid.asList()
+    for food in foodList:
+        distance = mazeDistance(position, food, problem.startingGameState)
+        maxList.append(distance)
+    if len(maxList) > 0:
+        return max(maxList)
+    return 0
+
+    return len(foodGrid.asList())
+    foodList = foodGrid.asList()
+    distanceSum = 0
+    minDict = {}
+    #finds closest food
+    for food in foodList:
+        minDict[food] = mazeDistance(position, food, problem.startingGameState)
+    if len(minDict) > 0:
+        distanceSum += (min(minDict.values()))
+        newPosition = min(minDict, key=minDict.get)
+        minDict = {}
+    else: 
         return 0
-    for food in foodGrid.asList():
-        #if(counter/2 == 0):
-        x1 += food[0]
-        y1 += food[1]
-        cost += math.sqrt((food[0] - position[0])*(food[0] - position[0]) + (food[1] - position[1])*(food[1] - position[1])) 
-        #else:
-        #    x2 += food[0]
-        #    y2 += food[1]
-        counter += 1
-    
-    # find the median point
-    x1 = (x1/counter)
-    y1 = (y1/counter) 
-    x2 = (x2/counter)
-    y2 = (y2/counter) 
-    
-    #return cost / math.sqrt((x1 - position[0])*(x1 - position[0]) + (y1 - position[1])*(y1 - position[1])) 
-    return math.sqrt((x1 - position[0])*(x1 - position[0]) + (y1 - position[1])*(y1 - position[1])) 
+    return distanceSum
+
+
+'''
+    else:
+        return 0
+    foodList.remove(newPosition)
+    while len(foodList) > 0:
+        for food in foodList:
+            minDict[food] = mazeDistance(newPosition, food, problem.startingGameState)
+        if len(minDict) > 0:
+            distanceSum += (min(minDict.values()))
+            newPosition = min(minDict, key=minDict.get)
+            minDict = {}
+        else:
+            break
+        foodList.remove(newPosition)
+    return distanceSum
+        
+
+
+
+    #if len(tempList) > 0:x
+        #distanceSum += min(tempList)
+   #smallestDistance = min(tempList)
+    #print(min(tempList))
+    # distanceSum += min(tempList)
+    #print(distanceSum)
+    return distanceSum
+    '''
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
